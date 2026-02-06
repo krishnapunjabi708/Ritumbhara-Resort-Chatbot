@@ -28,324 +28,379 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+/* =========================
+   THEME CSS — FULL (WITH BLACK-TEXT FIX)
+   - Keeps maroon/assistant areas white for contrast
+   - Forces black text in LIGHT MODE everywhere else
+   - Leaves DARK MODE variables/behavior intact
+   ========================= */
 
+/* =========================
+   FONT + RESET
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+* { box-sizing: border-box; }
+
+/* =========================
+   LIGHT MODE (DEFAULT) VARS
+   ========================= */
 :root{
-  --bg: #f6f8f9;            /* page background */
-  --panel: #ffffff;         /* card/panel backgrounds */
-  --muted: #f1f4f5;         /* subtle surfaces */
-  --text: #1f2933;          /* primary text (dark) */
-  --accent: #0b6b4f;        /* primary accent (green) */
-  --accent-2: #b88c2f;      /* secondary accent (muted gold) */
-  --shadow: 0 6px 20px rgba(31,41,51,0.06);
+  --bg: #f8f6f7;             /* page background (light) */
+  --panel: #ffffff;          /* card/panel */
+  --muted: #f1ecee;          /* chat background */
+  --text: #2b1c21;           /* primary text (dark) */
+  --text-muted: #6b4a55;
+  --accent: #8f1d3f;         /* maroon */
+  --accent-2: #c9a961;       /* gold */
+  --accent-soft: rgba(143,29,63,0.08);
+  --shadow: 0 8px 24px rgba(143,29,63,0.12);
   --radius: 12px;
-  --glass: rgba(255,255,255,0.6);
+  --focus: rgba(143,29,63,0.14);
 }
 
-/* Apply readable base font */
+/* =========================
+   DARK MODE VARS (system)
+   ========================= */
+@media (prefers-color-scheme: dark) {
+  :root{
+    --bg: #140b0f;
+    --panel: #1d1116;
+    --muted: #24161c;
+    --text: #f5ecef;
+    --text-muted: #c9a8b3;
+    --accent: #a32148;
+    --accent-2: #d6b66f;
+    --accent-soft: rgba(163,33,72,0.18);
+    --shadow: 0 10px 30px rgba(0,0,0,0.55);
+    --focus: rgba(211,179,112,0.12);
+  }
+}
+
+/* =========================
+   BASE LAYOUT
+   ========================= */
 html, body, [class^="css"], .main {
-  font-family: 'Lato', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color: var(--text);
-  background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
+  font-family: 'Lato', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(180deg,var(--bg),var(--panel));
+  color: var(--text);
+  margin: 0;
 }
 
-/* Hide Streamlit chrome safely */
+/* hide streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; height: 0; }
 
-/* --------- Page containers --------- */
-.main {
-  padding: 1.25rem;
-  box-sizing: border-box;
+/* container */
+.main { padding: clamp(0.75rem, 2vw, 1.5rem); }
+
+/* utility focus */
+:focus { outline: none; box-shadow: 0 0 0 4px var(--focus); border-radius: 6px; }
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
 
-/* Hero / Header: compact, professional */
-.hero-header{
-  background: linear-gradient(90deg, rgba(11,107,79,0.07), rgba(184,140,47,0.03));
+/* =========================
+   HERO / MAROON SECTIONS
+   (use class .maroon-section on any block
+    that should sit on maroon background)
+   ========================= */
+.maroon-section,
+.hero-header,
+.quick-access,
+.resort-highlights,
+[data-maroon="true"] {
+  background: linear-gradient(135deg, var(--accent), #6f1430);
+  color: #ffffff;
   border-radius: calc(var(--radius) + 4px);
-  padding: clamp(1rem, 2.5vw, 2rem);
-  margin-bottom: 1.25rem;
+  padding: clamp(0.9rem, 2vw, 1.6rem);
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.375rem;
 }
 
-.hero-title {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0;
-  color: var(--text);
-  /* responsive size */
-  font-size: clamp(1.4rem, 3.5vw, 2.25rem);
-  text-align: center;
+/* title color override for maroon sections */
+.maroon-section .section-title,
+.hero-header .hero-title,
+.quick-access .section-title,
+.resort-highlights .section-title {
+  color: #ffffff;
 }
 
-.hero-subtitle {
-  color: var(--accent);
-  font-weight: 400;
-  margin: 0;
-  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
-  text-align: center;
+/* icons / emoji highlight */
+.maroon-section .icon,
+.maroon-section .emoji { color: var(--accent-2); }
+
+/* inside maroon: cards must be white panels for legibility */
+.maroon-section .card,
+.maroon-section .info-card,
+.maroon-section .source-card {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--accent-soft) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
-/* --------- Panels / Cards --------- */
+/* ensure text inside maroon cards is dark (readable) */
+.maroon-section .card * { color: var(--text) !important; }
+
+/* if you have headings directly inside maroon that should be darker, force them */
+.maroon-section h1, .maroon-section h2, .maroon-section h3 { color: #ffffff !important; }
+
+/* =========================
+   CARDS / PANELS
+   ========================= */
 .card, .info-card, .feature-card, .source-card {
   background: var(--panel);
   border-radius: var(--radius);
   padding: 1rem;
   margin-bottom: 0.9rem;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(31,41,51,0.04);
-  box-sizing: border-box;
+  border: 1px solid var(--accent-soft);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+  color: var(--text); /* primary: dark text on white panels */
 }
 
-/* info card heading */
-.info-card-title, .feature-title {
-  font-weight: 700;
-  margin-bottom: 0.4rem;
-  color: var(--text);
-}
+/* titles / content */
+.info-card-title, .feature-title { font-weight: 700; color: var(--text); }
+.info-card-content { color: var(--text-muted); line-height: 1.6; }
 
-.info-card-content {
-  color: rgba(31,41,51,0.9);
-  line-height: 1.5;
-  font-size: 0.95rem;
-}
-
-/* feature card accent */
-.feature-card {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  border-left: 4px solid var(--accent);
-}
-
-/* feature icon */
-.feature-icon { font-size: 1.6rem; }
-
-/* source badge */
-.source-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  font-weight: 700;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  margin-right: 0.6rem;
-  font-size: 0.85rem;
-}
-
-/* --------- Chat / Messages (improved contrast) --------- */
-/* container for messages: neutral, readable */
+/* =========================
+   CHAT UI
+   ========================= */
 .chat-container {
   background: var(--muted);
   border-radius: calc(var(--radius) - 2px);
   padding: 1rem;
-  min-height: 360px;
-  box-shadow: var(--shadow);
-  box-sizing: border-box;
+  min-height: 320px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
-/* Generic message bubble */
+/* bubble base */
 .stChatMessage {
   border-radius: 12px !important;
   padding: 0.9rem !important;
-  margin: 0.65rem 0 !important;
-  box-shadow: 0 2px 8px rgba(16,24,32,0.03) !important;
-  color: var(--text) !important;
-  font-size: 0.95rem !important;
-  border: 1px solid rgba(31,41,51,0.04) !important;
+  margin: 0.6rem 0 !important;
   background: var(--panel) !important;
-  max-width: 92%;
-  word-break: break-word;
-}
-
-/* User messages — light background, strong text */
-.stChatMessage[data-testid*="user"] {
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
   color: var(--text) !important;
-  align-self: flex-end;
-  border-left: 4px solid rgba(11,107,79,0.08) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+  max-width: 92% !important;
+  word-break: break-word;
+  border: 1px solid rgba(0,0,0,0.03) !important;
 }
 
-/* Assistant messages — slightly tinted accent with white text for contrast */
+/* user bubble - light neutral */
+.stChatMessage[data-testid*="user"] {
+  background: linear-gradient(180deg,#ffffff,#faf6f7) !important;
+  color: var(--text) !important;
+  border-left: 4px solid var(--accent) !important;
+  align-self: flex-end;
+}
+
+/* assistant bubble - maroon accent (readable) */
 .stChatMessage[data-testid*="assistant"] {
-  background: linear-gradient(180deg, rgba(11,107,79,0.95), rgba(11,107,79,0.92)) !important;
+  background: linear-gradient(180deg,var(--accent),#6f1430) !important;
   color: #ffffff !important;
-  border-left: 4px solid rgba(184,140,47,0.12) !important;
+  border-left: 4px solid var(--accent-2) !important;
   align-self: flex-start;
 }
 
-/* Make sure any links in messages are readable */
-.stChatMessage a { color: #e7f7ef !important; text-decoration: underline; }
+/* links inside bubbles */
+.stChatMessage a { color: var(--accent-2) !important; text-decoration: underline; }
 
-/* Chat input area — visible divider and comfortable padding */
+/* chat input / textarea */
 .stChatInputContainer, .stTextInput, textarea, input[type="text"] {
-  background: #fff;
+  background: var(--panel);
   border-radius: 10px;
+  border: 1px solid var(--accent-soft);
   padding: 0.6rem;
-  border: 1px solid rgba(31,41,51,0.06);
-  box-shadow: none;
-  font-size: 0.95rem;
   color: var(--text);
   width: 100%;
-  box-sizing: border-box;
 }
 
-.stChatInputContainer {
-  border-top: 1px solid rgba(31,41,51,0.04);
-  padding-top: 0.75rem;
-}
+/* placeholder contrast */
+.stChatInputContainer ::placeholder,
+.stTextInput::placeholder,
+textarea::placeholder { color: color-mix(in srgb, var(--text) 60%, transparent); }
 
-/* Placeholder color */
-.stTextInput::placeholder, textarea::placeholder { color: rgba(31,41,51,0.45); }
-
-/* --------- Buttons (accessible) --------- */
-.stButton>button {
-  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+/* =========================
+   BUTTONS
+   ========================= */
+.stButton > button {
+  background: linear-gradient(135deg,var(--accent),#6f1430);
   color: #fff;
-  border: none;
   border-radius: 999px;
   padding: 0.6rem 1.1rem;
   font-weight: 700;
+  box-shadow: 0 6px 18px rgba(143,29,63,0.35);
   cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease;
-  box-shadow: 0 6px 18px rgba(11,107,79,0.12);
-  width: auto;
-  white-space: nowrap;
+  transition: transform .14s ease, box-shadow .14s ease;
 }
+.stButton > button:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(143,29,63,0.45); }
+.stButton > button:focus { box-shadow: 0 0 0 4px var(--focus); }
 
-.stButton>button:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(11,107,79,0.12); }
-.stButton>button:focus { outline: 3px solid rgba(11,107,79,0.12); outline-offset: 2px; }
-
-/* --------- Sidebar --------- */
+/* sidebar styling */
 [data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #0b6b4f 0%, #0b6b4f 100%);
+  background: linear-gradient(180deg,var(--accent),#5a0f26);
+  color: #fff;
   padding: 1.25rem;
-  color: #fff;
-  min-width: 220px;
-  box-sizing: border-box;
 }
+[data-testid="stSidebar"] * { color: #fff !important; }
 
-[data-testid="stSidebar"] h2, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {
-  color: #fff !important;
-}
+/* small rounded buttons used on maroon */
+.maroon-section .stButton > button { background: rgba(255,255,255,0.06) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.08) !important; }
 
-/* --------- Stats box --------- */
-.stats-box {
-  background: linear-gradient(90deg, rgba(11,107,79,0.92), rgba(11,107,79,0.85));
-  color: #fff;
-  padding: 0.9rem;
-  border-radius: 10px;
-  text-align: center;
-}
-.stats-number { font-weight: 700; font-size: 1.6rem; font-family: 'Lato', sans-serif; }
-
-/* --------- Scrollbar (subtle) --------- */
+/* =========================
+   SCROLLBAR
+   ========================= */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(11,107,79,0.75), rgba(11,107,79,0.95));
+  background: linear-gradient(180deg,var(--accent),var(--accent-2));
   border-radius: 8px;
 }
 
-/* --------- Small utility / accessibility improvements --------- */
-/* ensure focus visibility for keyboard users */
-button:focus, a:focus, input:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(11,107,79,0.08); }
+/* =========================
+   SMALL FIXES: ensure maroon sections text is visible
+   (safe, narrow selectors + !important only where needed)
+   ========================= */
+.hero-header, .maroon-section, .quick-access, .resort-highlights {
+  color: #fff !important;
+}
+.hero-header * , .maroon-section * { color: inherit !important; }
 
-@media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+/* force white icons/emojis on maroon */
+.hero-header .icon, .maroon-section .icon, .maroon-section .emoji { color: var(--accent-2) !important; }
+
+/* ensure cards placed ON maroon have dark text */
+.maroon-section .card, .maroon-section .info-card, .maroon-section .source-card { background: var(--panel) !important; color: var(--text) !important; }
+.maroon-section .card * { color: var(--text) !important; }
+
+/* =========================
+   RESPONSIVE (mobile-first adjustments)
+   ========================= */
+@media (max-width: 600px) {
+  .main { padding: 0.75rem; }
+  .maroon-section { padding: 0.9rem; border-radius: 10px; }
+  .stChatMessage { max-width: 96% !important; font-size: 0.95rem !important; }
+  .stButton > button { width: 100%; display: block; }
+}
+
+@media (max-width: 480px) {
+  .hero-header { padding: 0.8rem; }
+  .card { padding: 0.7rem; }
 }
 
 /* =========================
-   RESPONSIVE MEDIA QUERIES
+   OVERRIDE: FORCE BLACK TEXT IN LIGHT MODE
+   Place this at the end so it overrides earlier "force white" rules
+   (Dark mode is preserved — we only apply this override when system prefers light)
    ========================= */
+@media (prefers-color-scheme: light) {
+  /* Force most page text to black for readability */
+  html, body, .main,
+  h1, h2, h3, h4, h5, h6,
+  p, label, span, button, small, strong, b, em,
+  li, dt, dd {
+    color: #000000 !important;
+  }
 
-/* Very small phones — <= 360px */
-@media (max-width: 360px) {
-  .main { padding: 0.5rem; }
-  .hero-header { padding: 0.8rem; border-radius: 10px; }
-  .hero-title { font-size: 1.1rem; }
-  .hero-subtitle { font-size: 0.85rem; }
-  .card, .info-card, .feature-card, .source-card { padding: 0.7rem; border-radius: 8px; }
-  .feature-icon { font-size: 1.25rem; }
-  .chat-container { min-height: 260px; padding: 0.6rem; }
-  .stChatMessage { font-size: 0.88rem !important; padding: 0.6rem !important; }
-  .stButton>button { padding: 0.55rem 0.8rem; font-size: 0.92rem; width: 100%; }
-  [data-testid="stSidebar"] { padding: 0.9rem; min-width: 180px; }
+  /* Ensure all card/panel content is black */
+  .card, .card *, .info-card, .info-card *, .feature-card, .feature-card *, .source-card, .source-card * {
+    color: #000000 !important;
+  }
+
+  /* Chat user bubble and its interior content must be black */
+  .stChatMessage[data-testid*="user"], .stChatMessage[data-testid*="user"] * {
+    color: #000000 !important;
+  }
+
+  /* Inputs & placeholders dark */
+  input, textarea, select, .stTextInput, .stChatInputContainer {
+    color: #000000 !important;
+    background: var(--panel) !important;
+  }
+  ::placeholder { color: rgba(0,0,0,0.45) !important; }
+
+  /* Links on light backgrounds should be dark for contrast */
+  a, a:link, a:visited, .card a, .info-card a, .stChatMessage a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Sidebar content is a maroon area—keep its text white for contrast */
+  [data-testid="stSidebar"], [data-testid="stSidebar"] * {
+    color: #ffffff !important;
+  }
+
+  /* Maroon sections and assistant bubble must remain white for contrast */
+  .maroon-section, .maroon-section *, .hero-header, .hero-header *, .quick-access, .quick-access *, .resort-highlights, .resort-highlights * {
+    color: #ffffff !important;
+  }
+  .stChatMessage[data-testid*="assistant"], .stChatMessage[data-testid*="assistant"] * {
+    color: #ffffff !important;
+  }
+
+  /* Cards that sit ON maroon should remain dark text (white panel on maroon) */
+  .maroon-section .card, .maroon-section .info-card, .maroon-section .source-card {
+    color: var(--text) !important;
+  }
+
+  /* Safety: ensure main area text is dark if anything else tries to override */
+  html, body, .main { color: #000000 !important; }
+}
+            /* ====== Sidebar: force readable (black) text on white cards ======
+   Paste this at the VERY END of your <style> and hard-refresh the page
+*/
+
+/* Keep section titles on the maroon sidebar white for contrast */
+[data-testid="stSidebar"] .section-title,
+[data-testid="stSidebar"] .hero-title,
+[data-testid="stSidebar"] .quick-access .section-title {
+  color: #ffffff !important;
 }
 
-/* Small phones — <= 480px */
-@media (max-width: 480px) {
-  .hero-title { font-size: 1.2rem; }
-  .info-card-content { font-size: 0.9rem; }
-  .feature-card { gap: 0.5rem; }
-  .feature-icon { font-size: 1.4rem; }
-  .chat-container { min-height: 300px; }
-  .stChatMessage { max-width: 94%; }
-  .stButton>button { width: 100%; display: block; }
+/* Make all card/panel content inside the sidebar use dark text */
+[data-testid="stSidebar"] .card,
+[data-testid="stSidebar"] .card *,
+[data-testid="stSidebar"] .info-card,
+[data-testid="stSidebar"] .info-card *,
+[data-testid="stSidebar"] .feature-card,
+[data-testid="stSidebar"] .feature-card *,
+[data-testid="stSidebar"] .source-card,
+[data-testid="stSidebar"] .source-card * {
+  color: var(--text, #000000) !important;
 }
 
-/* Narrow phones & phablets — <= 600px */
-@media (max-width: 600px) {
-  .hero-header { padding: 1rem; }
-  .card, .info-card, .feature-card, .source-card { padding: 0.85rem; }
-  .feature-card { flex-direction: column; align-items: flex-start; }
-  .feature-title { font-size: 1rem; }
-  .source-number { width: 26px; height: 26px; font-size: 0.8rem; }
-  .stChatMessage { font-size: 0.92rem !important; }
-  .stats-number { font-size: 1.3rem; }
-  [data-testid="stSidebar"] { display: block; width: 100%; min-width: unset; position: relative; }
+/* Inputs, placeholders, and inline text elements inside sidebar */
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea,
+[data-testid="stSidebar"] select,
+[data-testid="stSidebar"] .stTextInput,
+[data-testid="stSidebar"] .stText,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] li {
+  color: var(--text, #000000) !important;
+}
+[data-testid="stSidebar"] ::placeholder {
+  color: rgba(0,0,0,0.45) !important;
 }
 
-/* Tablets — <= 768px */
-@media (max-width: 768px) {
-  .main { padding: 0.9rem; }
-  .hero-title { font-size: 1.5rem; }
-  .hero-subtitle { font-size: 0.98rem; }
-  .card, .info-card, .feature-card { padding: 0.95rem; }
-  .chat-container { min-height: 320px; }
-  .stChatMessage { max-width: 88%; }
-  .stButton>button { font-size: 0.98rem; padding: 0.55rem 0.9rem; width: 100%; }
-  .feature-card { gap: 0.6rem; }
-}
+/* Keep buttons in sidebar styled as before (white text on maroon buttons) */
+[data-testid="stSidebar"] .stButton > button { color: #ffffff !important; }
 
-/* Small laptops — <= 1024px */
-@media (max-width: 1024px) {
-  .main { padding: 1rem; }
-  .hero-title { font-size: clamp(1.6rem, 2.4vw, 1.9rem); }
-  .card, .info-card, .feature-card { padding: 1rem; }
-  .chat-container { min-height: 340px; }
-  [data-testid="stSidebar"] { min-width: 200px; }
-}
-
-/* Laptops / Desktops — <= 1280px */
-@media (max-width: 1280px) {
-  .hero-title { font-size: clamp(1.8rem, 2.2vw, 2.05rem); }
-  .card { padding: 1rem; }
-  .chat-container { min-height: 360px; }
-}
-
-/* Large desktops — up to very large screens */
-@media (min-width: 1281px) {
-  .main { max-width: 1300px; margin: 0 auto; }
-  .hero-title { font-size: clamp(2.0rem, 1.6vw, 2.5rem); }
-  .chat-container { min-height: 420px; }
-}
-
-/* Extremely wide displays */
-@media (min-width: 1600px) {
-  .main { max-width: 1500px; padding: 2rem; }
-  .hero-title { font-size: clamp(2.2rem, 1.2vw, 3rem); }
-  .card { padding: 1.25rem; }
+/* Safety: undo a prior "everything white" rule that may be broad */
+[data-testid="stSidebar"] *,
+[data-testid="stSidebar"] *::before,
+[data-testid="stSidebar"] *::after {
+  /* only clear color if the element is inside a white panel/card or not a maroon heading */
+  /* we apply specific rules above; this prevents stray white text elsewhere */
+  color: inherit !important;
 }
 
 </style>
+
 
 """, unsafe_allow_html=True)
 
@@ -866,7 +921,7 @@ def generate_smart_response(query: str, relevant_chunks: List[Dict]) -> str:
 **For immediate assistance:**
 📞 **Call:** +91 9829523881
 ✉️ **Email:** shivamlohiya@ritumbhararesort.com
-🌐 **Book Online:** https://bookings.asiatech.in
+🌐 **Book Online:** https://bookings.asiatech.in/?page=963&type=website
 
 Could you please rephrase your question or ask about:
 • Room accommodations and amenities
@@ -924,7 +979,7 @@ def generate_booking_response(chunks: List[Dict]) -> str:
 Here's how you can reserve your room at Ritumbhara Resort:
 
 ### **Booking Methods:**
-🌐 **Online Booking:** [Click here to book now](https://bookings.asiatech.in)
+🌐 **Online Booking:** [Click here to book now](https://bookings.asiatech.in/?page=963&type=website)
 📞 **Call Us:** +91 9829523881
 ✉️ **Email:** shivamlohiya@ritumbhararesort.com
 🏨 **Walk-in:** Visit us directly (subject to availability)
