@@ -1227,7 +1227,7 @@ with st.sidebar:
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔗 Book Now", use_container_width=True):
-            st.markdown("[Click here](https://bookings.asiatech.in)")
+            st.markdown("[Click here](https://bookings.asiatech.in/?page=963&type=website)")
     with col2:
         if st.button("🌟 Membership", use_container_width=True):
             st.markdown("[Join now](https://connect.ritumbhararesort.com)")
