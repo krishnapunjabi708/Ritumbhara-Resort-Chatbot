@@ -1175,7 +1175,7 @@ def generate_general_response(query: str, chunks: List[Dict]) -> str:
     response += f"""---\n\n**Need more information?**
 📞 Call: +91 9829523881
 ✉️ Email: shivamlohiya@ritumbhararesort.com
-🌐 Book: https://bookings.asiatech.in"""
+🌐 Book: https://bookings.asiatech.in/?page=963&type=website"""
     
     return response
 
