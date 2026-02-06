@@ -89,7 +89,7 @@ html, body, [class^="css"], .main {
 }
 
 /* hide streamlit chrome */
-#MainMenu, footer, header { visibility: hidden; height: 0; }
+
 
 /* container */
 .main { padding: clamp(0.75rem, 2vw, 1.5rem); }
